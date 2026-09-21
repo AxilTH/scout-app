@@ -1,0 +1,46 @@
+---
+description: Feature-based modular monolith — организация файлов и каталогов scout-app
+alwaysApply: true
+---
+
+# Архитектура: feature-based модульный монолит
+
+Nx-монорепо Angular + NestJS. Код и работа режутся **по фичам** (вертикальные слайсы), не по техническим слоям и не по полному DDD.
+
+FDD отвечает за папки и единицу работы. DDD — точечный инструмент внутри сложной фичи, не каркас репозитория.
+
+## Структура
+
+```text
+apps/scout-frontend/     # оболочка: роутер, layout, SSR
+apps/scout-backend/      # оболочка: main, config, PrismaModule
+libs/
+  shared/types           # DTO и контракты API (фронт + бэк)
+  shared/ui              # переиспользуемый UI
+  <feature>/             # фича целиком: страницы, data-access, Nest-модуль
+```
+
+Новую функциональность клади в `libs/<feature>/` или в feature-модуль приложения. Оболочки в `apps/` остаются тонкими.
+
+## NestJS
+
+Одна фича = один модуль. Колокация: `*.module.ts`, `*.controller.ts`, `*.service.ts`, `dto/`.
+
+CRUD к Prisma: `controller → service → db`. Без агрегатов, репозиториев-портов и слоёв domain/application/infrastructure «на вырост».
+
+## Angular / Nx
+
+Фича: роут, страницы, компоненты и data-access рядом. Не складывай всё в общие `services/` и `components/`.
+
+Типы Nx-библиотек: `feature` / `ui` / `data-access` / `util`.
+
+## Когда подключать DDD
+
+Только внутри фичи, у которой появились инварианты (не CRUD). Bounded contexts — когда появятся 2–3 разных языка домена (например скоутинг, биллинг, идентичность).
+
+## Запрещено
+
+- Слои `domain / application / infrastructure` на весь репозиторий
+- Feature-Sliced Design (`app/pages/widgets/features/entities/shared`) — избыточен
+- Общие свалки `services/`, `components/`, `helpers/` без границы фичи
+- Полный DDD (aggregates, domain events, ports/adapters) для простых CRUD-фич
