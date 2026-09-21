@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { PrismaService } from '../prisma/prisma.service';
 import { AppService } from './app.service';
 
 describe('AppService', () => {
@@ -6,7 +7,23 @@ describe('AppService', () => {
 
   beforeAll(async () => {
     const app = await Test.createTestingModule({
-      providers: [AppService],
+      providers: [
+        AppService,
+        {
+          provide: PrismaService,
+          useValue: {
+            db: {
+              orm: {
+                public: {
+                  User: {
+                    all: jest.fn().mockResolvedValue([]),
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
     }).compile();
 
     service = app.get<AppService>(AppService);

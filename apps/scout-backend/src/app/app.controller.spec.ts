@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '../prisma/prisma.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -8,7 +9,23 @@ describe('AppController', () => {
   beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
+      providers: [
+        AppService,
+        {
+          provide: PrismaService,
+          useValue: {
+            db: {
+              orm: {
+                public: {
+                  User: {
+                    all: jest.fn().mockResolvedValue([]),
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
     }).compile();
   });
 
