@@ -1,0 +1,36 @@
+---
+description: Color tokens и class-API фронтенда scout-app
+alwaysApply: true
+---
+
+# Frontend styles: токены и encapsulation
+
+Цвета живут в [`apps/scout-frontend/src/styles/_tokens.scss`](apps/scout-frontend/src/styles/_tokens.scss). Utility-классы — в [`apps/scout-frontend/src/styles/_utilities.scss`](apps/scout-frontend/src/styles/_utilities.scss). Подключение через [`apps/scout-frontend/src/styles.scss`](apps/scout-frontend/src/styles.scss).
+
+## Class-API
+
+Матрица роль × токен. Класс сразу задаёт CSS-свойство, без промежуточных `--scout-*`.
+
+- `.bg-primary` → `background-color: var(--primary-color-token)`
+- `.text-primary` → `color: var(--primary-color-token)`
+- `.icon-primary` → `color: var(--primary-color-token)`
+
+Токены: `primary`, `secondary`, `tertiary`, `inverse`, `accent`, `accent-primary-tint`, `contrast-immutable`, `overlay`, `placeholder`.
+
+```html
+<app-card class="bg-inverse text-primary">
+  <app-icon class="icon-accent" />
+</app-card>
+```
+
+В компонентах не хардкодить hex. Либо эти классы через `class`, либо `var(--*-color-token)` в SCSS. У SVG — `fill: currentColor`, чтобы `.icon-*` работал.
+
+Новый цвет: добавить `--<name>-color-token` в `_tokens.scss` и имя в `$color-tokens` в `_utilities.scss`.
+
+## Encapsulation
+
+`ViewEncapsulation.Emulated` — дефолт Angular, явно не дублировать в декораторе.
+
+Не ставить `ViewEncapsulation.None` и `ShadowDom` без отдельной причины. `None` смешает стили компонентов.
+
+Глобальные `.bg-*` / `.text-*` / `.icon-*` намеренно доступны всем — их передают через `class`.

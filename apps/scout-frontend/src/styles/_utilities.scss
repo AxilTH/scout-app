@@ -1,0 +1,25 @@
+$color-tokens: (
+  primary,
+  secondary,
+  tertiary,
+  inverse,
+  accent,
+  accent-primary-tint,
+  contrast-immutable,
+  overlay,
+  placeholder,
+);
+
+@each $name in $color-tokens {
+  .bg-#{$name} {
+    background-color: var(--#{$name}-color-token);
+  }
+
+  .text-#{$name} {
+    color: var(--#{$name}-color-token);
+  }
+
+  .icon-#{$name} {
+    color: var(--#{$name}-color-token);
+  }
+}
